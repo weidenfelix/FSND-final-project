@@ -3,14 +3,11 @@ from flask import request, _request_ctx_stack
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
-
+from config import AUTH0_DOMAIN, ALGORITHMS, API_AUDIENCE
 '''
 mostly from: https://auth0.com/docs/quickstart/backend/python/01-authorization
 '''
 
-AUTH0_DOMAIN = 'dev-edtgxxcz.us.auth0.com'
-ALGORITHMS = ['RS256']
-API_AUDIENCE = 'https://poetry-api'
 
 # AuthError Exception
 '''
