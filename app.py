@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 
 from models import Poem, Tag
 from models import db, setup_db
+from auth.auth_decorator import requires_auth, AuthError
 
 
 def create_app(testing=False):
