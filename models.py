@@ -1,7 +1,7 @@
 import logging
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column
+from sqlalchemy import Column, CheckConstraint
 from config import Config, TestConfig
 
 db = SQLAlchemy()
@@ -11,7 +11,8 @@ setup_db(app)
     binds a flask application and a SQLAlchemy service
 """
 
-def setup_db(app, testing):
+
+def setup_db(app, testing=False):
     with app.app_context():
         # change db uri if testing
         app.config.from_object(TestConfig if testing else Config)
@@ -37,7 +38,8 @@ class Poem(db.Model):
     id = Column(db.Integer, primary_key=True)
     name = Column(db.String, unique=True)
     content = Column(db.String, nullable=False, unique=True)
-    rating = Column(db.Integer)
+    # constraints are not working yet
+    rating = Column(db.Integer, CheckConstraint('rating>=1'), CheckConstraint('rating<=5'))
     tags = db.relationship('Tag', secondary=association_table, backref='poems')
 
     def __repr__(self):
