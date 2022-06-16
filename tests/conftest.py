@@ -1,10 +1,10 @@
-from os import environ as env
+import os
 
 import pytest, logging
 from app import create_app
 from models import setup_db, db, Poem, Tag
 from requests import post
-from config import AUTH0_DOMAIN, API_AUDIENCE, TESTUSER_NAME, TESTUSER_PASSWORD, API_CLIENT_ID
+from config import AUTH0_DOMAIN, API_AUDIENCE
 from dotenv import load_dotenv
 from flask import abort
 
@@ -54,20 +54,22 @@ def setup_test_db(app):
 def client(app):
     return app.test_client()
 
-
 # login as testuser and provide access token for testing
 @pytest.fixture()
 def auth_header(client):
     load_dotenv()
-    client_secret = env.get('API_CLIENT_SECRET')
+    client_secret = os.environ['API_CLIENT_SECRET']
+    client_id = os.environ['API_CLIENT_ID']
+    testuser_name = os.environ['TESTUSER_NAME']
+    testuser_password = os.environ['TESTUSER_PASSWORD']
 
     response = post(url=f'https://{AUTH0_DOMAIN}/oauth/token', headers={'content-type': 'application/json'}, json={
-        'client_id': API_CLIENT_ID,
+        'client_id': client_id,
         'client_secret': client_secret,
         'audience': API_AUDIENCE,
         'grant_type': 'password',
-        'username': TESTUSER_NAME,
-        'password': TESTUSER_PASSWORD
+        'username': testuser_name,
+        'password': testuser_password
     }).json()
     if not response['access_token']:
         abort(500)
