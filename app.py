@@ -10,7 +10,7 @@ from flask_migrate import Migrate
 from models import Poem, Tag
 from models import db, setup_db
 from auth.auth_decorator import requires_auth, AuthError
-from config import AUTH0_CLIENT_ID, API_AUDIENCE
+
 from authlib.integrations.flask_client import OAuth
 
 def create_app():
@@ -24,12 +24,12 @@ def create_app():
     oauth = OAuth(app)
     oauth.register(
         "auth0",
-        client_id=AUTH0_CLIENT_ID,
+        client_id=env.get('AUTH0_CLIENT_ID'),
         client_secret=env.get('AUTH0_CLIENT_SECRET'),
         client_kwargs={
             "scope": "openid profile email",
         },
-        server_metadata_url=f'https://{API_AUDIENCE}/.well-known/openid-configuration'
+        server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
     )
 
     '''
