@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 APP CONFIG
 '''
 
-
+load_dotenv()
 
 AUTH0_DOMAIN = 'dev-edtgxxcz.us.auth0.com'
 ALGORITHMS = ['RS256']
@@ -24,24 +24,19 @@ API_CLIENT_ID="HlQcyOXJaH5jnR9mFIrF5u3ABHRtlFke"
 TESTUSER_NAME="testuser1@gmail.com"
 TESTUSER_PASSWORD="@23qdyG6Rw&z"
 
-heroku_test_db_url = env.get('HEROKU_POSTGRESQL_BROWN_URL')
 
 class Config(object):
+    # we switch DB URI if we are local or in heroku; assuming that DATABASE_URL and HEROKU_..._URL only exist in heroku
     try:
+        # heroku calls db starting with URL postgres:// but within psql this has changed to postgresql, so we edit
+        # manually
         SQLALCHEMY_DATABASE_URI = env.get('DATABASE_URL').replace("://", "ql://", 1)
     except:
-        # loads .env into environment; separates local build and heroku
-        load_dotenv()
-        SQLALCHEMY_DATABASE_URI = env.get('TEST_DATABASE_URL')
+        SQLALCHEMY_DATABASE_URI = env.get('LOCAL_DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class TestConfig(object):
-    load_dotenv()
-    # switch url if testing online/local
-    if heroku_test_db_url:
-        SQLALCHEMY_DATABASE_URI = heroku_test_db_url.replace("://", "ql://", 1)
-    else:
-        SQLALCHEMY_DATABASE_URI = env.get('TEST_DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = env.get('LOCAL_TEST_DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
