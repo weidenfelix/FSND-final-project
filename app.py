@@ -1,17 +1,18 @@
-from os import environ as env
 import sys
-
+import openai
+import requests
 import flask, logging
 from flask import Flask, jsonify, abort, request, redirect, url_for
 from flask_cors import CORS
 from flask_migrate import Migrate
+from authlib.integrations.flask_client import OAuth
+from os import environ as env
 
 from config import AUTH0_CLIENT_ID, AUTH0_DOMAIN, API_AUDIENCE
 from models import Poem, Tag
 from models import db, setup_db
 from auth.auth_decorator import requires_auth, AuthError
 
-from authlib.integrations.flask_client import OAuth
 
 def create_app():
     app = Flask(__name__)
@@ -45,7 +46,7 @@ def create_app():
 
     @app.route("/callback", methods=["GET", "POST"])
     def callback():
-        token = oauth.auth0.authorize_access_token()
+        token = oauth.auth0.authorize_access_token()['access_token']
         return jsonify({
             'Authorization': f'Bearer {token}'
         })
