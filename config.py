@@ -36,7 +36,7 @@ class Config(object):
 class TestConfig(object):
     # switch url if testing online/local
     if heroku_test_db_url:
-        SQLALCHEMY_DATABASE_URI = heroku_test_db_url
+        SQLALCHEMY_DATABASE_URI = heroku_test_db_url.replace("://", "ql://", 1)
     else:
         SQLALCHEMY_DATABASE_URI = env.get('TEST_DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False

@@ -1,12 +1,12 @@
 from os import environ as env
 import sys
-from urllib.parse import urlencode, quote_plus
 
 import flask, logging
 from flask import Flask, jsonify, abort, request, redirect, url_for
 from flask_cors import CORS
 from flask_migrate import Migrate
 
+from config import AUTH0_CLIENT_ID, AUTH0_DOMAIN, API_AUDIENCE
 from models import Poem, Tag
 from models import db, setup_db
 from auth.auth_decorator import requires_auth, AuthError
@@ -24,12 +24,12 @@ def create_app():
     oauth = OAuth(app)
     oauth.register(
         "auth0",
-        client_id=env.get('AUTH0_CLIENT_ID'),
+        client_id=AUTH0_CLIENT_ID,
         client_secret=env.get('AUTH0_CLIENT_SECRET'),
         client_kwargs={
             "scope": "openid profile email",
         },
-        server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
+        server_metadata_url=f'https://{AUTH0_DOMAIN}/.well-known/openid-configuration'
     )
 
     '''
@@ -40,7 +40,7 @@ def create_app():
     def login():
         return oauth.auth0.authorize_redirect(
             redirect_uri=url_for("callback", _external=True),
-            audience=env.get("API_AUDIENCE")
+            audience=API_AUDIENCE
         )
 
     @app.route("/callback", methods=["GET", "POST"])
