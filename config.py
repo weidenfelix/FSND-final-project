@@ -12,8 +12,7 @@ logging.basicConfig(level=logging.INFO)
 APP CONFIG
 '''
 
-# loads .env into environment; separates local build and heroku
-load_dotenv()
+
 
 AUTH0_DOMAIN = 'dev-edtgxxcz.us.auth0.com'
 ALGORITHMS = ['RS256']
@@ -28,12 +27,17 @@ TESTUSER_PASSWORD="@23qdyG6Rw&z"
 heroku_test_db_url = env.get('HEROKU_POSTGRESQL_BROWN_URL')
 
 class Config(object):
-
-    SQLALCHEMY_DATABASE_URI = env.get('DATABASE_URL')
+    try:
+        SQLALCHEMY_DATABASE_URI = env.get('DATABASE_URL').replace("://", "ql://", 1)
+    except:
+        # loads .env into environment; separates local build and heroku
+        load_dotenv()
+        SQLALCHEMY_DATABASE_URI = env.get('TEST_DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class TestConfig(object):
+    load_dotenv()
     # switch url if testing online/local
     if heroku_test_db_url:
         SQLALCHEMY_DATABASE_URI = heroku_test_db_url.replace("://", "ql://", 1)
