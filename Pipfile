@@ -18,6 +18,7 @@ pytest = "*"
 python-jose = {extras = ["cryptography"], version = "*"}
 requests = "*"
 authlib = "*"
+openai = "*"
 
 [dev-packages]
 

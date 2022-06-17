@@ -106,12 +106,40 @@ def create_app():
     @requires_auth(permission='post:write-poem')
     def post_write_poem():
         r = request.get_json()
-        if not ('topic' and 'adjectives') in r:
+        topic = r.get('topic', 0)
+        adjectives = r.get('adjectives', 0)
+        if not topic + adjectives:
             abort(422)
+        # restrict length of query
+        if len(''.join(r.get('topic'))) > 25 or len(''.join(adjectives)) > 25:
+            abort(422)
+        OPENAI_API_KEY = env.get('OPENAI_API_KEY')
+        openai.Model.list()
 
-        # API MAGIC
-        pass
-        return True
+        prompt = f'Write a {", ".join(adjectives)} poem about {topic}.'
+        response = requests.post(url='https://api.openai.com/v1/completions',
+                                 json={'model': 'text-davinci-002',
+                                       'prompt': f'{prompt}',
+                                       'temperature': r.get('temperature', 0.7),
+                                       'max_tokens': 50},
+                                 headers={'Authorization': f'Bearer {OPENAI_API_KEY}'})
+        if response.status_code != 200:
+            abort(500)
+        content = response.json().get('choices')[0].get('text')
+        poem = Poem(content=content)
+        try:
+            db.session.add(poem)
+            db.session.commit()
+            poem_id = poem.id
+        except:
+            db.session.rollback()
+            logging.error(f'{poem} could not be added:\n'
+                          f'{sys.exc_info()}')
+            abort(500)
+        finally:
+            db.session.close()
+
+        return {'poem': Poem.query.get(poem_id).format()}
 
     '''
     PATCH
