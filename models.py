@@ -77,7 +77,7 @@ class Tag(helperClass):
     __tablename__ = 'tag'
 
     id = Column(db.Integer, primary_key=True)
-    name = Column(db.String(length=50), nullable=False)
+    name = Column(db.String(length=50), nullable=False, unique=True)
 
     def __repr__(self):
         return f'<Tag(id={self.id}, name={self.name})>'

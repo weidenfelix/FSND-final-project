@@ -127,7 +127,14 @@ def create_app():
         if response.status_code != 200:
             abort(500)
         content = response.json().get('choices')[0].get('text')
-        poem = Poem(content=content, tags=[Tag(name=adjective) for adjective in adjectives])
+        # check if tag already exists, if not create
+        tags = []
+        for adjective in adjectives:
+            tag = Tag.query.filter_by(name=adjective)
+            if not tag:
+                tag = Tag(name=adjective)
+            tags.append(tag)
+        poem = Poem(content=content, tags=tags)
         try:
             poem.insert()
             poem_id = poem.id
