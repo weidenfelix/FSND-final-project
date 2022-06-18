@@ -130,7 +130,7 @@ def create_app():
         # check if tag already exists, if not create
         tags = []
         for adjective in adjectives:
-            tag = Tag.query.filter_by(name=adjective)
+            tag = Tag.query.filter_by(name=adjective).first()
             if not tag:
                 tag = Tag(name=adjective)
             tags.append(tag)
