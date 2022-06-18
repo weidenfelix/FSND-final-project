@@ -55,8 +55,7 @@ with OpenAI's API and saves the created poem to the db.**
 
 POST /write-poem
 
-*curl -X POST https://fsnd-poetry-app.herokuapp.com/write-poem --header "Authorization: Bearer $TOKEN" --header "Content-Type: application/json"  
-    --data '{"adjectives":["vast", "flowery"], "topic":"mountains"}'*
+*curl -X POST https://fsnd-poetry-app.herokuapp.com/write-poem --header "Authorization: Bearer $TOKEN" --header "Content-Type: application/json" --data '{"adjectives":["vast", "flowery"], "topic":"mountains"}'*
 
 PS: inputs are limited to 25 characters each
 
@@ -65,8 +64,7 @@ Ratings are only allowed from 1-5.**
 
 PATCH /poem/poem_id 
 
-*curl -X PATCH https://fsnd-poetry-app.herokuapp.com/poem/1 --header "Authorization: Bearer $TOKEN" --header "Content-Type: application/json"  
-    --data '{"name": "the peak above", "rating": 1}'*
+*curl -X PATCH https://fsnd-poetry-app.herokuapp.com/poem/1 --header "Authorization: Bearer $TOKEN" --header "Content-Type: application/json" --data '{"name": "the peak above", "rating": 1}'*
 
 **DELETE**
 
