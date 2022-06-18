@@ -57,7 +57,7 @@ POST
 '''
 
 
-@pytest.mark.auth_required
+@pytest.mark.poet
 def test_post_write_poem(client, auth_header):
     response = client.post('/write-poem', headers=auth_header, json={
         'topic': 'tree in winter',
@@ -67,7 +67,7 @@ def test_post_write_poem(client, auth_header):
     assert response.status_code == 200
 
 
-@pytest.mark.auth_required
+@pytest.mark.poet
 def test_post_write_poem_422_inputs_too_long(client, auth_header):
     response = client.post('/write-poem', headers=auth_header, json={
         'topic': 'treeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeees',
@@ -77,12 +77,24 @@ def test_post_write_poem_422_inputs_too_long(client, auth_header):
     assert response.status_code == 422
 
 
+@pytest.mark.editor
+def test_editor_cant_write_poems(client, auth_header):
+    response = client.post('/write-poem', headers=auth_header, json={
+        'topic': 'tree in winter',
+        'adjectives': ['strong', 'sleepy'],
+        'temperature': 0.1
+    })
+    assert response.status_code == 403
+
+
+
+
 '''
 PATCH
 '''
 
 
-@pytest.mark.auth_required
+@pytest.mark.editor
 def test_patch_poem(client, auth_header):
     poem = Poem.query.first()
     response = client.patch(f'/poem/{poem.id}', headers=auth_header, json={
@@ -95,7 +107,7 @@ def test_patch_poem(client, auth_header):
     assert Poem.query.get(poem.id) != poem
 
 
-@pytest.mark.auth_required
+@pytest.mark.editor
 def test_patch_wrong_keys_422(client, auth_header):
     poem = Poem.query.first()
     response = client.patch(f'/poem/{poem.id}', headers=auth_header, json={
@@ -111,7 +123,7 @@ DELETE
 '''
 
 
-@pytest.mark.auth_required
+@pytest.mark.editor
 def test_delete_poem(client, auth_header):
     poem_id = Poem.query.first().id
     response = client.delete(f'/poem/{poem_id}', headers=auth_header)
@@ -120,13 +132,13 @@ def test_delete_poem(client, auth_header):
     assert response.json == {'deleted_poem_id': poem_id}
 
 
-@pytest.mark.auth_required
+@pytest.mark.editor
 def test_delete_poem_404_not_found(client, auth_header):
     response = client.delete(f'/poem/1000', headers=auth_header)
     assert response.status_code == 404
 
 
-@pytest.mark.auth_required
+@pytest.mark.editor
 def test_delete_tag_from_poem(client, auth_header):
     poem = Poem.query.first().format()
     tag = poem['tags'][0]
@@ -134,24 +146,3 @@ def test_delete_tag_from_poem(client, auth_header):
     poem['tags'].remove(tag)
     assert response.status_code == 200
     assert response.json == {'poem': poem}
-
-
-'''
-AUTH_TESTING
-'''
-
-
-@pytest.mark.editor
-def test_editor_cant_write_poems(client, auth_header):
-    response = client.post('/write-poem', headers=auth_header, json={
-        'topic': 'tree in winter',
-        'adjectives': ['strong', 'sleepy'],
-        'temperature': 0.1
-    })
-    assert response.status_code == 403
-
-@pytest.mark.editor
-def test_editor_can_delete_poem(client, auth_header):
-    poem_id = Poem.query.first().format().get('id')
-    response = client.delete(f'/poem/{poem_id}', headers=auth_header)
-    assert response.status_code == 200
