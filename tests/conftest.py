@@ -54,20 +54,13 @@ def setup_test_db(app):
 def client(app):
     return app.test_client()
 
-# login as testuser and provide access token for testing
-@pytest.fixture()
-def auth_header(client):
-    load_dotenv()
 
-    response = post(url=f'https://{AUTH0_DOMAIN}/oauth/token', headers={'content-type': 'application/json'}, json={
-        'client_id': API_CLIENT_ID,
-        'client_secret': env.get('API_CLIENT_SECRET'),
-        'audience': API_AUDIENCE,
-        'grant_type': 'password',
-        'username': TESTUSER_NAME,
-        'password': TESTUSER_PASSWORD
-    }).json()
-    if not response['access_token']:
-        abort(500)
-    auth_header = {'Authorization': f'Bearer {response["access_token"]}'}
-    return auth_header
+# these 2 functions let us enter the access token via commandline
+def pytest_addoption(parser):
+    parser.addoption("--token", action="store", default="")
+
+
+@pytest.fixture(scope="session")
+def auth_header(pytestconfig):
+    token = pytestconfig.getoption("token")
+    return {'Authorization': f'Bearer {token}'}

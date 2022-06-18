@@ -4,6 +4,7 @@ from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
 from config import AUTH0_DOMAIN, ALGORITHMS, API_AUDIENCE
+
 '''
 mostly from: https://auth0.com/docs/quickstart/backend/python/01-authorization
 '''
