@@ -127,8 +127,9 @@ To test the protected endpoints that require at least **Poet** permissions:
 - Returns all poems.
 - Example:
 
-
-    curl https://fsnd-poetry-app.herokuapp.com/poems
+```
+curl https://fsnd-poetry-app.herokuapp.com/poems
+```
 ```
 {"poems":
     [
@@ -148,33 +149,38 @@ To test the protected endpoints that require at least **Poet** permissions:
     ]
 }
 ```
+
 **GET /poems/tag_name** 
 - Returns all poems that share a tag.
 - Example:
 
-
-    curl https://fsnd-poetry-app.herokuapp.com/poems/vast
+```
+curl https://fsnd-poetry-app.herokuapp.com/poems/vast
+```
 
 **GET /poems/rating**
 - Returns all poems that share the same rating.
 - Example:
 
-
-    curl https://fsnd-poetry-app.herokuapp.com/poems/5
+```
+curl https://fsnd-poetry-app.herokuapp.com/poems/5
+```
 
 **GET /poem/poem_id**
 - Returns the poem with poem_id.
 - Example:
 
-
-    curl https://fsnd-poetry-app.herokuapp.com/poem/1
+```
+curl https://fsnd-poetry-app.herokuapp.com/poem/1
+```
 
 **GET /poem/poem_name**
 - Returns the poem with poem_name.
 - Example:
 
-
-    curl https://fsnd-poetry-app.herokuapp.com/poem/mountaintop
+```
+curl https://fsnd-poetry-app.herokuapp.com/poem/mountaintop
+```
 
 **POST /write-poem**
 
@@ -192,8 +198,9 @@ To test the protected endpoints that require at least **Poet** permissions:
 
 - Example:
 
-
-    curl -X POST https://fsnd-poetry-app.herokuapp.com/write-poem --header "Authorization: Bearer $TOKEN" --header "Content-Type: application/json" --data '{"adjectives":["vast", "flowery"], "topic":"mountains"}'
+```
+curl -X POST https://fsnd-poetry-app.herokuapp.com/write-poem --header "Authorization: Bearer $TOKEN" --header "Content-Type: application/json" --data '{"adjectives":["vast", "flowery"], "topic":"mountains"}'
+```
 ```
 {
 "poem":
@@ -219,8 +226,9 @@ To test the protected endpoints that require at least **Poet** permissions:
 
 - Example:
 
-
-    curl -X PATCH https://fsnd-poetry-app.herokuapp.com/poem/7 --header "Authorization: Bearer $TOKEN" --header "Content-Type: application/json" --data '{"name": "nature's gift", "rating": 1}'
+```
+curl -X PATCH https://fsnd-poetry-app.herokuapp.com/poem/7 --header "Authorization: Bearer $TOKEN" --header "Content-Type: application/json" --data '{"name": "nature's gift", "rating": 1}'
+```
 ```
 {
 "patched_poem":
@@ -238,8 +246,9 @@ To test the protected endpoints that require at least **Poet** permissions:
 - Deletes poem with poem_id.
 - Example:
 
-
-    curl -X DELETE https://fsnd-poetry-app.herokuapp.com/poem/7 --header "Authorization: Bearer $TOKEN"
+```
+curl -X DELETE https://fsnd-poetry-app.herokuapp.com/poem/7 --header "Authorization: Bearer $TOKEN"
+```
 ```
 {
 "deleted_poem_id":7
@@ -249,8 +258,9 @@ To test the protected endpoints that require at least **Poet** permissions:
 - Deletes tag with tag_name from poem with poem_id.
 - Example:
 
-
-    curl -X DELETE https://fsnd-poetry-app.herokuapp.com/poem/7/vast --header "Authorization: Bearer $TOKEN"
+```
+curl -X DELETE https://fsnd-poetry-app.herokuapp.com/poem/7/vast --header "Authorization: Bearer $TOKEN"
+```
 ```
 {
 "poem":
