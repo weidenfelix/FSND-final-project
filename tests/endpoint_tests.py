@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 
 from models import Poem, Tag
@@ -22,6 +24,11 @@ def test_get_poems_by_tag(client):
     response = client.get(f'/poems/{tag_name}')
     poems_by_tag = list(map(lambda poem: poem.format(), Tag.query.filter_by(name=tag_name).first().poems))
     assert response.json == {'poems': poems_by_tag}
+
+
+def test_get_poems_404_unknown_tag(client):
+    response = client.get(f'/poems/THISISNOTATAG')
+    assert response.status_code == 404
 
 
 def test_get_poems_by_rating(client):
@@ -52,15 +59,22 @@ POST
 
 @pytest.mark.auth_required
 def test_post_write_poem(client, auth_header):
-    response = client.post('/write', headers=auth_header, json={
+    response = client.post('/write-poem', headers=auth_header, json={
         'topic': 'tree in winter',
-        'adjectives': 'strong and sleepy',
-        'temperature': 1
+        'adjectives': ['strong', 'sleepy'],
+        'temperature': 0.1
     })
-    # check that response id and content are not empty
     assert response.status_code == 200
-    assert response.json['id']
-    assert response.json['content']
+
+
+@pytest.mark.auth_required
+def test_post_write_poem_422_inputs_too_long(client, auth_header):
+    response = client.post('/write-poem', headers=auth_header, json={
+        'topic': 'treeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeees',
+        'adjectives': ['strong', 'sleepy'],
+        'temperature': 0.1
+    })
+    assert response.status_code == 422
 
 
 '''
@@ -79,6 +93,7 @@ def test_patch_poem(client, auth_header):
     assert response.status_code == 200
     # assert change, maybe more needed?
     assert Poem.query.get(poem.id) != poem
+
 
 @pytest.mark.auth_required
 def test_patch_wrong_keys_422(client, auth_header):
@@ -104,6 +119,13 @@ def test_delete_poem(client, auth_header):
     assert Poem.query.get(poem_id) is None
     assert response.json == {'deleted_poem_id': poem_id}
 
+
+@pytest.mark.auth_required
+def test_delete_poem_404_not_found(client, auth_header):
+    response = client.delete(f'/poem/1000', headers=auth_header)
+    assert response.status_code == 404
+
+
 @pytest.mark.auth_required
 def test_delete_tag_from_poem(client, auth_header):
     poem = Poem.query.first().format()
@@ -113,3 +135,23 @@ def test_delete_tag_from_poem(client, auth_header):
     assert response.status_code == 200
     assert response.json == {'poem': poem}
 
+
+'''
+AUTH_TESTING
+'''
+
+
+@pytest.mark.editor
+def test_editor_cant_write_poems(client, auth_header):
+    response = client.post('/write-poem', headers=auth_header, json={
+        'topic': 'tree in winter',
+        'adjectives': ['strong', 'sleepy'],
+        'temperature': 0.1
+    })
+    assert response.status_code == 403
+
+@pytest.mark.editor
+def test_editor_can_delete_poem(client, auth_header):
+    poem_id = Poem.query.first().format().get('id')
+    response = client.delete(f'/poem/{poem_id}', headers=auth_header)
+    assert response.status_code == 200
