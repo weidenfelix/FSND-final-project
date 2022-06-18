@@ -109,12 +109,12 @@ def create_app():
         r = request.get_json()
         topic = r.get('topic', 0)
         adjectives = r.get('adjectives', 0)
-        if not topic + adjectives:
+        if not topic or not adjectives:
             abort(422)
         # restrict length of query
         if len(''.join(r.get('topic'))) > 25 or len(''.join(adjectives)) > 25:
             abort(422)
-        OPENAI_API_KEY = env.get('OPENAI_API_KEY')
+        openai.api_key = env.get('OPENAI_API_KEY')
         openai.Model.list()
 
         prompt = f'Write a {", ".join(adjectives)} poem about {topic}.'
@@ -123,11 +123,11 @@ def create_app():
                                        'prompt': f'{prompt}',
                                        'temperature': r.get('temperature', 0.7),
                                        'max_tokens': 50},
-                                 headers={'Authorization': f'Bearer {OPENAI_API_KEY}'})
+                                 headers={'Authorization': f'Bearer {openai.api_key}'})
         if response.status_code != 200:
             abort(500)
         content = response.json().get('choices')[0].get('text')
-        poem = Poem(content=content)
+        poem = Poem(content=content, tags=[Tag(name=adjective) for adjective in adjectives])
         try:
             db.session.add(poem)
             db.session.commit()
