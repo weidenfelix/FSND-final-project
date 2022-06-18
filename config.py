@@ -23,13 +23,12 @@ AUTH0_CLIENT_ID=env.get('AUTH0_CLIENT_ID')
 
 
 class Config(object):
-    # we switch DB URI if we are local or in heroku; assuming that DATABASE_URI and HEROKU_..._URI only exist in heroku
     try:
         # heroku calls db starting with URI postgres:// but within psql this has changed to postgresql, so we edit
         # manually
-        SQLALCHEMY_DATABASE_URI = env.get('DATABASE_URI').replace("://", "ql://", 1)
+        SQLALCHEMY_DATABASE_URI = env.get('DATABASE_URL').replace("://", "ql://", 1)
     except:
-        SQLALCHEMY_DATABASE_URI = env.get('LOCAL_DATABASE_URI')
+        SQLALCHEMY_DATABASE_URI = env.get('LOCAL_DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
