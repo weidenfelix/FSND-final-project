@@ -43,12 +43,13 @@ class Poem(db.Model):
     tags = db.relationship('Tag', secondary=association_table, backref='poems')
 
     def __repr__(self):
-        return f'<Poem(id={self.id}, name={self.name}, tags={self.tags})>'
+        return f'<Poem(id={self.id}, name={self.name}, content={self.content} tags={self.tags})>'
 
     def format(self):
         return {
             'id': self.id,
             'name': self.name,
+            'content': self.content,
             'rating': self.rating,
             'tags': [tag.format() for tag in self.tags]
         }
