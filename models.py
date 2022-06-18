@@ -16,7 +16,7 @@ def setup_db(app, testing=False):
     with app.app_context():
         # change db uri if testing
         app.config.from_object(TestConfig if testing else Config)
-        logging.info(f' Loading db with URL: {app.config["SQLALCHEMY_DATABASE_URI"]}')
+        logging.info(f' Loading db with URI: {app.config["SQLALCHEMY_DATABASE_URI"]}')
         db.init_app(app)
         db.create_all()
 

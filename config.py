@@ -14,26 +14,26 @@ APP CONFIG
 
 load_dotenv()
 
-AUTH0_DOMAIN = 'dev-edtgxxcz.us.auth0.com'
-ALGORITHMS = ['RS256']
-API_AUDIENCE = 'https://poetry-api'
+AUTH0_DOMAIN = env.get('AUTH0_DOMAIN')
+ALGORITHMS = env.get('ALGORITHMS')
+API_AUDIENCE = env.get('API_AUDIENCE')
 
-AUTH0_CLIENT_ID="QYhS1Lqo5NQZRckZg59XPy2DfcXD61WQ"
-API_CLIENT_ID="HlQcyOXJaH5jnR9mFIrF5u3ABHRtlFke"
+AUTH0_CLIENT_ID=env.get('AUTH0_CLIENT_ID')
+
 
 
 class Config(object):
-    # we switch DB URI if we are local or in heroku; assuming that DATABASE_URL and HEROKU_..._URL only exist in heroku
+    # we switch DB URI if we are local or in heroku; assuming that DATABASE_URI and HEROKU_..._URI only exist in heroku
     try:
-        # heroku calls db starting with URL postgres:// but within psql this has changed to postgresql, so we edit
+        # heroku calls db starting with URI postgres:// but within psql this has changed to postgresql, so we edit
         # manually
-        SQLALCHEMY_DATABASE_URI = env.get('DATABASE_URL').replace("://", "ql://", 1)
+        SQLALCHEMY_DATABASE_URI = env.get('DATABASE_URI').replace("://", "ql://", 1)
     except:
-        SQLALCHEMY_DATABASE_URI = env.get('LOCAL_DATABASE_URL')
+        SQLALCHEMY_DATABASE_URI = env.get('LOCAL_DATABASE_URI')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class TestConfig(object):
-    SQLALCHEMY_DATABASE_URI = env.get('LOCAL_TEST_DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = env.get('LOCAL_TEST_DATABASE_URI')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
