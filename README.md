@@ -64,11 +64,14 @@ endpoints:
 
 If all tests pass, your local installation is set up correctly.
 
-### Running the server  
+### Running the server locally
 From within the root directory, first ensure you're working with your created
 pipenv. As the FLASK vars are already set, run the server, execute the following:
 
     flask run
+
+### Heroku
+Heroku uses a gunicorn server to host this application. It automatically deploys every new push from this repo!
 
 ### Authentication
 
