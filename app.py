@@ -219,7 +219,7 @@ def create_app():
         try:
             poem.tags.remove(tag)
             poem.insert()
-            f_poem = poem.long()
+            f_poem = poem.short()
         except:
             db.session.rollback()
             logging.error(f'{tag} could not be deleted from {poem}:\n{sys.exc_info()}')
