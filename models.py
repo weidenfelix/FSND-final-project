@@ -32,7 +32,25 @@ association_table = db.Table(
 )
 
 
-class Poem(db.Model):
+'''
+Extend the base Model class to add common methods
+'''
+class helperClass(db.Model):
+    __abstract__ = True
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+
+class Poem(helperClass):
     __tablename__ = 'poem'
 
     id = Column(db.Integer, primary_key=True)
@@ -55,7 +73,7 @@ class Poem(db.Model):
         }
 
 
-class Tag(db.Model):
+class Tag(helperClass):
     __tablename__ = 'tag'
 
     id = Column(db.Integer, primary_key=True)

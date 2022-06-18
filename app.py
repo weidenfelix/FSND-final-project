@@ -129,8 +129,7 @@ def create_app():
         content = response.json().get('choices')[0].get('text')
         poem = Poem(content=content, tags=[Tag(name=adjective) for adjective in adjectives])
         try:
-            db.session.add(poem)
-            db.session.commit()
+            poem.insert()
             poem_id = poem.id
         except:
             db.session.rollback()
@@ -166,8 +165,7 @@ def create_app():
                 r.pop('tags')
             for key in r:
                 setattr(poem, key, r[key])
-            db.session.add(poem)
-            db.session.commit()
+            poem.insert()
             f_poem = poem.format()
         except:
             db.session.rollback()
@@ -191,8 +189,7 @@ def create_app():
         if not poem:
             abort(404)
         try:
-            db.session.delete(poem)
-            db.session.commit()
+            poem.delete()
         except:
             db.session.rollback()
             logging.error(f'{poem} could not be deleted:\n'
@@ -214,8 +211,7 @@ def create_app():
             abort(404)
         try:
             poem.tags.remove(tag)
-            db.session.add(poem)
-            db.session.commit()
+            poem.insert()
             f_poem = poem.format()
         except:
             db.session.rollback()
