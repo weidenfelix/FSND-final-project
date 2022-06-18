@@ -1,15 +1,9 @@
-from os import environ as env
-
 import pytest, logging
 from app import create_app
 from models import setup_db, db, Poem, Tag
-from requests import post
-from config import AUTH0_DOMAIN, API_AUDIENCE, TESTUSER_NAME, TESTUSER_PASSWORD, API_CLIENT_ID
-from dotenv import load_dotenv
-from flask import abort
 
 
-# scope lets us use the same app for every test
+# scope lets use only one app for all tests
 @pytest.fixture(autouse=True, scope='session')
 def app():
     app = create_app()
@@ -26,11 +20,11 @@ def setup_test_db(app):
     db.create_all()
     logging.info('recreating test db')
 
-    tag1 = Tag(id=1, name='poetic')
-    tag2 = Tag(id=2, name='horrific')
-    poem1 = Poem(id=1, name='testpoem1', content='testing is easy, life is easy, please freeze me', rating=5,
+    tag1 = Tag(name='poetic')
+    tag2 = Tag(name='horrific')
+    poem1 = Poem(name='testpoem1', content='testing is easy, life is easy, please freeze me', rating=5,
                  tags=[tag1])
-    poem2 = Poem(id=2, name='testpoem2', content='rain is wet, I won a bet, because Jane, slipped in the rain',
+    poem2 = Poem(name='testpoem2', content='rain is wet, I won a bet, because Jane, slipped in the rain',
                  rating=4,
                  tags=[tag1, tag2])
     test_data = [poem1, poem2]
