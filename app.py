@@ -68,7 +68,7 @@ def create_app():
     @app.route('/poems', methods=['GET'])
     def get_poems():
         poems = Poem.query.all()
-        return jsonify({'poems': [poem.format() for poem in poems]})
+        return jsonify({'poems': [poem.long() for poem in poems]})
 
     @app.route('/poems/<string:tag_name>', methods=['GET'])
     def get_poems_by_tag(tag_name):
@@ -76,28 +76,28 @@ def create_app():
         if not tag:
             abort(404)
         poems = tag.poems
-        return jsonify({'poems': [poem.format() for poem in poems]})
+        return jsonify({'poems': [poem.long() for poem in poems]})
 
     @app.route('/poems/<int:rating>', methods=['GET'])
     def get_poems_by_id(rating):
         poems = Poem.query.filter_by(rating=rating).all()
         if not poems:
             abort(404)
-        return jsonify({'poems': [poem.format() for poem in poems]})
+        return jsonify({'poems': [poem.long() for poem in poems]})
 
     @app.route('/poem/<int:poem_id>', methods=['GET'])
     def get_poem_by_id(poem_id):
         poem = Poem.query.get(poem_id)
         if not poem:
             abort(404)
-        return jsonify({'poem': poem.format()})
+        return jsonify({'poem': poem.long()})
 
     @app.route('/poem/<string:poem_name>', methods=['GET'])
     def get_poem_by_name(poem_name):
         poem = Poem.query.filter_by(name=poem_name).first()
         if not poem:
             abort(404)
-        return jsonify({'poem': poem.format()})
+        return jsonify({'poem': poem.long()})
 
     '''
     POST
@@ -146,7 +146,7 @@ def create_app():
         finally:
             db.session.close()
 
-        return {'poem': Poem.query.get(poem_id).format()}
+        return {'poem': Poem.query.get(poem_id).short()}
 
     '''
     PATCH
@@ -173,7 +173,7 @@ def create_app():
             for key in r:
                 setattr(poem, key, r[key])
             poem.insert()
-            f_poem = poem.format()
+            f_poem = poem.long()
         except:
             db.session.rollback()
             logging.error(f'{poem} could not be patched:\n'
@@ -219,7 +219,7 @@ def create_app():
         try:
             poem.tags.remove(tag)
             poem.insert()
-            f_poem = poem.format()
+            f_poem = poem.long()
         except:
             db.session.rollback()
             logging.error(f'{tag} could not be deleted from {poem}:\n{sys.exc_info()}')

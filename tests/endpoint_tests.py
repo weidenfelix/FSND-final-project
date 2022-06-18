@@ -15,14 +15,14 @@ GET
 
 def test_get_poems(client):
     response = client.get('/poems')
-    poems = [poem.format() for poem in Poem.query.all()]
+    poems = [poem.long() for poem in Poem.query.all()]
     assert response.json == {'poems': poems}
 
 
 def test_get_poems_by_tag(client):
     tag_name = Poem.query.first().tags[0].name
     response = client.get(f'/poems/{tag_name}')
-    poems_by_tag = list(map(lambda poem: poem.format(), Tag.query.filter_by(name=tag_name).first().poems))
+    poems_by_tag = list(map(lambda poem: poem.long(), Tag.query.filter_by(name=tag_name).first().poems))
     assert response.json == {'poems': poems_by_tag}
 
 
@@ -34,7 +34,7 @@ def test_get_poems_404_unknown_tag(client):
 def test_get_poems_by_rating(client):
     rating = Poem.query.first().rating
     response = client.get(f'/poems/{rating}')
-    poems_by_rating = list(map(lambda poem: poem.format(), Poem.query.filter_by(rating=rating).all()))
+    poems_by_rating = list(map(lambda poem: poem.long(), Poem.query.filter_by(rating=rating).all()))
     assert response.json == {'poems': poems_by_rating}
 
 
@@ -42,14 +42,14 @@ def test_get_poem_by_id(client):
     id = Poem.query.first().id
     response = client.get(f'/poem/{id}')
     poem_by_id = Poem.query.get(id)
-    assert response.json == {'poem': poem_by_id.format()}
+    assert response.json == {'poem': poem_by_id.long()}
 
 
 def test_get_poem_by_name(client):
     name = Poem.query.first().name
     response = client.get(f'/poem/{name}')
     poem_by_name = Poem.query.filter_by(name=name).first()
-    assert response.json == {'poem': poem_by_name.format()}
+    assert response.json == {'poem': poem_by_name.long()}
 
 
 '''
@@ -140,7 +140,7 @@ def test_delete_poem_404_not_found(client, auth_header):
 
 @pytest.mark.editor
 def test_delete_tag_from_poem(client, auth_header):
-    poem = Poem.query.first().format()
+    poem = Poem.query.first().long()
     tag = poem['tags'][0]
     response = client.delete(f'/poem/{poem["id"]}/{tag["name"]}', headers=auth_header)
     poem['tags'].remove(tag)

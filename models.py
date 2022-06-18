@@ -31,10 +31,11 @@ association_table = db.Table(
     Column('tag_id', db.ForeignKey('tag.id'), primary_key=True)
 )
 
-
 '''
 Extend the base Model class to add common methods
 '''
+
+
 class helperClass(db.Model):
     __abstract__ = True
 
@@ -63,13 +64,20 @@ class Poem(helperClass):
     def __repr__(self):
         return f'<Poem(id={self.id}, name={self.name}, content={self.content} tags={self.tags})>'
 
-    def format(self):
+    def short(self):
+        return {
+            'id': self.id,
+            'content': self.content,
+            'tags': [tag.long() for tag in self.tags]
+        }
+
+    def long(self):
         return {
             'id': self.id,
             'name': self.name,
             'content': self.content,
             'rating': self.rating,
-            'tags': [tag.format() for tag in self.tags]
+            'tags': [tag.long() for tag in self.tags]
         }
 
 
@@ -82,7 +90,7 @@ class Tag(helperClass):
     def __repr__(self):
         return f'<Tag(id={self.id}, name={self.name})>'
 
-    def format(self):
+    def long(self):
         return {
             'id': self.id,
             'name': self.name
